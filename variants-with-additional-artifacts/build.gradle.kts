@@ -42,20 +42,18 @@ tasks.create("downloadMetadata") {
         // gradleModuleMetadata.incoming.artifacts.artifactFiles.forEach { println(it.readText()) }
         println("Only metadata:")
         gradleModuleMetadata.incoming.artifactView {
-            lenient(true)
+            lenient(true) // sometimes '.module' is missing
         }.files.forEach { println(it.name) }
 
         println("")
         println("All files:")
         allFiles.incoming.artifactView {
-            lenient(true)
+            lenient(true) // sometimes '.module' is missing
         }.files.forEach { println(it.name) }
 
         println("")
         println("All files with dependencies:")
-        allFilesWithDependencies.incoming.artifactView {
-            lenient(true)
-        }.files.forEach { println(it.name) }
+        allFilesWithDependencies.incoming.files.forEach { println(it.name) }
 
     }
 }
@@ -93,7 +91,7 @@ open class DirectMetadataAccessVariantRule : ComponentMetadataRule {
 
         // TODO it would be better to add another variant instead of modifying "runtime".
         //      But at the moment we can only match by name here. And both can be there 'runtime' (pom) or 'runtimeElements' (gmm)
-        ctx.details.withVariant("runtimeElements") {
+        ctx.details.maybeAddVariant("allFilesWithDependenciesElements", "runtimeElements") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, getObjects().named(Usage.JAVA_RUNTIME))
                 attribute(Category.CATEGORY_ATTRIBUTE, getObjects().named(Category.DOCUMENTATION))
@@ -105,7 +103,7 @@ open class DirectMetadataAccessVariantRule : ComponentMetadataRule {
                 addFile("${id.name}-${id.version}.jar")
             }
         }
-        ctx.details.withVariant("runtime") {
+        ctx.details.maybeAddVariant("allFilesWithDependencies", "runtime") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, getObjects().named(Usage.JAVA_RUNTIME))
                 attribute(Category.CATEGORY_ATTRIBUTE, getObjects().named(Category.DOCUMENTATION))
