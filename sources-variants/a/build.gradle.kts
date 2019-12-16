@@ -24,3 +24,9 @@ tasks.create("allSources") {
         }
     }
 }
+
+tasks.named<Jar>("sourcesJar") {
+    from(configurations["sourcesPath"].incoming.artifactView {
+        attributes.attribute(Attribute.of("artifactType", String::class.java), "java-sources-directory")
+    }.files)
+}

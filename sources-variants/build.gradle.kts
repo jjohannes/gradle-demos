@@ -7,6 +7,16 @@ subprojects {
         val sourcesElements: Configuration by configurations.getting {
             // include sources of dependencies
             extendsFrom(configurations["implementation"])
+            outgoing.variants.create("sourcesDirectory") {
+                attributes.attribute(Attribute.of("artifactType", String::class.java), "java-sources-directory")
+                val sourceSet = the<SourceSetContainer>()[SourceSet.MAIN_SOURCE_SET_NAME]
+                sourceSet.java.srcDirs.forEach {
+                    artifact(it)
+                }
+                sourceSet.groovy.srcDirs.forEach {
+                    artifact(it)
+                }
+            }
         }
 
         // create a 'sourcesPath' configuration to resolve sources
@@ -19,3 +29,6 @@ subprojects {
         }
     }
 }
+
+val SourceSet.groovy: SourceDirectorySet
+    get() = withConvention(GroovySourceSet::class) { groovy }
