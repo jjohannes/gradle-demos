@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    `groovy`
 }
 
 java {
@@ -7,5 +8,6 @@ java {
 }
 
 dependencies {
+    implementation(localGroovy())
     implementation(project(":c"))
 }

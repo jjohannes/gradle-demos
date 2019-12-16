@@ -1,5 +1,5 @@
 subprojects {
-    plugins.withType<JavaPlugin> {
+    plugins.withType<GroovyPlugin> {
         extensions.getByType<JavaPluginExtension>().apply {
             // activate sources variant (includes sources jar task and 'sourcesElements' configuration)
             withSourcesJar()
@@ -18,4 +18,4 @@ subprojects {
             }
         }
     }
-    }
+}

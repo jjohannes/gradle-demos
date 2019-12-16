@@ -1,3 +1,3 @@
-rootProject.name = "variants-with-additional-artifacts"
+rootProject.name = "sources-variants"
 
 include("a", "b", "c")

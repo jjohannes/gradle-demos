@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    `groovy`
 }
 
 java {
@@ -7,6 +8,7 @@ java {
 }
 
 dependencies {
+    implementation(localGroovy())
     implementation(project(":b"))
 }
 
@@ -14,11 +16,11 @@ tasks.create("allSources") {
     doLast {
         println("== my own sources")
         configurations["sourcesElements"].outgoing.artifacts.files.forEach {
-            println(it.name)
+            println(it.path)
         }
         println("== my dependency sources")
         configurations["sourcesPath"].files.forEach {
-            println(it.name)
+            println(it.path)
         }
     }
 }
