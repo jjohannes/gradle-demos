@@ -19,5 +19,6 @@ configurations["macosX64CompileKlibraries"].apply {
 dependencies {
     "commonMainImplementation"(kotlin("stdlib-common"))
     "commonMainImplementation"("example:kotlin-multiplatform-library:1.0")
+    "commonMainImplementation"("example:kotlin-multiplatform-android-library:1.0")
     //"commonMainImplementation"("example:kotlin-library:1.0")
 }

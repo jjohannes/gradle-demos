@@ -9,12 +9,14 @@ kotlin {
     linuxX64()
 }
 
-publishing {
-    publications.forEach { println("Koltin-Native publication: ${it.name}") }
-}
-
 dependencies {
     "commonMainImplementation"(kotlin("stdlib-common"))
     "jvmMainImplementation"(kotlin("stdlib"))
     "jsMainImplementation"(kotlin("stdlib-js"))
+}
+
+afterEvaluate {
+    publishing {
+        publications.forEach { println("Koltin-Native publication: ${it.name}") }
+    }
 }

@@ -10,6 +10,7 @@ import example.androidlib.AndroidLibraryUtil;
 import example.javalib.JavaLibraryUtil;
 import example.kotlinlib.KotlinLibraryUtil;
 import example.kotlinlibmp.KotlinMultiplatformLibraryUtil;
+import example.kotlinlibmpandroid.KotlinMultiplatformAndroidLibraryUtil;
 
 public class MainActivity extends Activity {
 
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
         info += AndroidLibrarySingleVariantUtil.use() + "\n";
         info += AndroidKotlinLibraryUtil.INSTANCE.use() + "\n";
         info += KotlinMultiplatformLibraryUtil.INSTANCE.use() + "\n";
+        info += KotlinMultiplatformAndroidLibraryUtil.INSTANCE.use() + "\n";
 
         textView.setText(info);
         setContentView(textView);

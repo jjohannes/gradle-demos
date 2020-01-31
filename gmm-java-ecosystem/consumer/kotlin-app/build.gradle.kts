@@ -2,6 +2,8 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.zip.ZipFile
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+
 plugins {
     application
     kotlin("jvm")
@@ -31,6 +33,8 @@ dependencies {
     implementation("example:android-library:1.0")
     implementation("example:android-library-single-variant:1.0")
     implementation("example:android-kotlin-library:1.0")
+    // works when we make 'jvm' and 'androidJvm' of 'org.jetbrains.kotlin.platform.type' compatible
+    implementation("example:kotlin-multiplatform-android-library:1.0") // <- misses a pure JVM variant
     // selects JVM variant because of 'usage' attribute
     implementation("example:kotlin-multiplatform-library:1.0")
 }
@@ -49,12 +53,21 @@ dependencies {
     attributesSchema {
         getMatchingStrategy(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE).compatibilityRules.add(
                 AarJarCompatibility::class.java)
+        getMatchingStrategy(KotlinPlatformType.attribute).compatibilityRules.add(
+                AndroidJvmCompatibility::class.java)
     }
 }
 class AarJarCompatibility : AttributeCompatibilityRule<LibraryElements> {
     override fun execute(details: CompatibilityCheckDetails<LibraryElements>) {
         // We accept aars on the classpath as we can transform them into jars (see JarExtraction below)
         if (details.producerValue?.name == "aar") {
+            details.compatible()
+        }
+    }
+}
+class AndroidJvmCompatibility : AttributeCompatibilityRule<KotlinPlatformType> {
+    override fun execute(details: CompatibilityCheckDetails<KotlinPlatformType>) {
+        if (details.producerValue == KotlinPlatformType.androidJvm && details.consumerValue == KotlinPlatformType.jvm) {
             details.compatible()
         }
     }

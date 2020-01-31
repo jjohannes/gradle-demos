@@ -6,6 +6,7 @@ import example.androidlib.AndroidLibraryUtil;
 import example.javalib.JavaLibraryUtil;
 import example.kotlinlib.KotlinLibraryUtil;
 import example.kotlinlibmp.KotlinMultiplatformLibraryUtil;
+import example.kotlinlibmpandroid.KotlinMultiplatformAndroidLibraryUtil;
 
 public class App {
 
@@ -16,6 +17,7 @@ public class App {
         AndroidLibrarySingleVariantUtil.use();
         AndroidKotlinLibraryUtil.INSTANCE.use();
         KotlinMultiplatformLibraryUtil.INSTANCE.use();
+        KotlinMultiplatformAndroidLibraryUtil.INSTANCE.use();
     }
 
 }

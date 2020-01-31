@@ -10,6 +10,7 @@ import example.androidlib.AndroidLibraryUtil
 import example.javalib.JavaLibraryUtil
 import example.kotlinlib.KotlinLibraryUtil
 import example.kotlinlibmp.KotlinMultiplatformLibraryUtil
+import example.kotlinlibmpandroid.KotlinMultiplatformAndroidLibraryUtil
 
 class MainActivity : Activity() {
 
@@ -24,6 +25,7 @@ class MainActivity : Activity() {
             ${AndroidLibrarySingleVariantUtil.use()}
             ${AndroidKotlinLibraryUtil.use()}
             ${KotlinMultiplatformLibraryUtil.use()}
+            ${KotlinMultiplatformAndroidLibraryUtil.use()}
         """.trimIndent()
 
         textView.text = info
