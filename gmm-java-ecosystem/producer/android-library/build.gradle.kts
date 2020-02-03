@@ -29,7 +29,7 @@ afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("lib") {
-                from(components["fullRelease"])
+                from(components["all"])
             }
         }
     }
