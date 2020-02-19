@@ -8,18 +8,21 @@ repositories {
 
 val gradleModuleMetadata: Configuration by configurations.creating {
     attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION) )
         attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named("gradle-module-metadata"))
     }
     extendsFrom(configurations.runtimeClasspath.get())
 }
 val allFiles: Configuration by configurations.creating {
     attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION) )
         attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named("all-files"))
     }
     extendsFrom(configurations.runtimeClasspath.get())
 }
 val allFilesWithDependencies: Configuration by configurations.creating {
     attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION) )
         attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named("all-files-with-dependencies"))
     }
     extendsFrom(configurations.runtimeClasspath.get())
