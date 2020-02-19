@@ -89,8 +89,6 @@ open class DirectMetadataAccessVariantRule : ComponentMetadataRule {
             }
         }
 
-        // TODO it would be better to add another variant instead of modifying "runtime".
-        //      But at the moment we can only match by name here. And both can be there 'runtime' (pom) or 'runtimeElements' (gmm)
         ctx.details.maybeAddVariant("allFilesWithDependenciesElements", "runtimeElements") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, getObjects().named(Usage.JAVA_RUNTIME))
