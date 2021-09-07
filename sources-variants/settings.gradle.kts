@@ -1,3 +1,11 @@
 rootProject.name = "sources-variants"
 
-include("a", "b", "c")
+pluginManagement {
+    includeBuild("build-logic")
+}
+
+dependencyResolutionManagement {
+    repositories.mavenCentral()
+}
+
+include("lib-a", "lib-b", "main")
