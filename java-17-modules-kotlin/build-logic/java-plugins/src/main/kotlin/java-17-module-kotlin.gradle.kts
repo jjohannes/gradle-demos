@@ -29,7 +29,7 @@ tasks.compileTestJava {
     classpath = configurations.testCompileClasspath.get()
 }
 val testJar = tasks.register<Jar>(sourceSets.test.get().jarTaskName) {
-    // Package test code/resources as Jar so that they are a propper module at runtime
+    // Package test code/resources as Jar so that they are a proper module at runtime
     archiveClassifier.set("tests")
     from(sourceSets.test.get().output)
 }
