@@ -1,0 +1,16 @@
+pluginManagement {
+    def projectPlugins = new File(rootDir.parentFile, "project-plugins")
+    if (projectPlugins.exists()) {
+        println("Groovy DSL Settings Plugin - pluginManagement.includeBuild: $projectPlugins")
+        includeBuild(projectPlugins.path)
+    }
+}
+plugins {
+    id("com.gradle.enterprise")
+}
+
+gradleEnterprise {
+    buildScan.publishAlways()
+    buildScan.termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    buildScan.termsOfServiceAgree = "yes"
+}
