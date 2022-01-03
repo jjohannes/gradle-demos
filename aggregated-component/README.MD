@@ -1,1 +1,0 @@
-A sample showing how to _merge_ several subprojects for publishing them as one component.
