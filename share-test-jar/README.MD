@@ -1,0 +1,1 @@
+An example that shows how to share tests between projects in Gradle by declaring a [feature variant](https://docs.gradle.org/current/userguide/feature_variants.html#sec::declare_feature_variants) similar to how [test fixtures](https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures) are shared.
