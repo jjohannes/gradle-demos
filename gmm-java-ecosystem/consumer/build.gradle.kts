@@ -1,17 +1,6 @@
 plugins {
-    id("com.android.application") version "3.6.0-rc03" apply false
-    kotlin("jvm") version "1.3.61" apply false
-    kotlin("android") version "1.3.61" apply false
-    kotlin("android.extensions") version "1.3.61" apply false
-    kotlin("multiplatform") version "1.3.61" apply false
-}
-
-allprojects {
-    repositories {
-        maven {
-            setUrl(File(rootDir.parentFile, "producer/repo"))
-        }
-        jcenter()
-        google()
-    }
+    id("com.android.application") version "7.0.4" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.6.10" apply false
+    id("org.jetbrains.kotlin.android") version "1.6.10" apply false
+    id("org.jetbrains.kotlin.multiplatform") version "1.6.10" apply false
 }

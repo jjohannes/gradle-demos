@@ -1,17 +1,12 @@
-rootProject.name = "consumer"
-
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.namespace == "com.android") {
-                useModule("com.android.tools.build:gradle:${requested.version}")
-            }
-        }
-    }
+    repositories.gradlePluginPortal()
+    repositories.google()
+}
+
+dependencyResolutionManagement {
+     repositories.maven(File(rootDir.parentFile, "producer/repo"))
+     repositories.mavenCentral()
+     repositories.google()
 }
 
 include("java-app")

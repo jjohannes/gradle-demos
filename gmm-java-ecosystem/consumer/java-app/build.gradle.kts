@@ -3,7 +3,7 @@ import java.nio.file.StandardCopyOption
 import java.util.zip.ZipFile
 
 plugins {
-    application
+    id("application")
 }
 
 val artifactType = Attribute.of("artifactType", String::class.java)
@@ -34,7 +34,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "myapp.App"
+    mainClass.set("myapp.App")
 }
 
 

@@ -5,8 +5,8 @@ import java.util.zip.ZipFile
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
-    application
-    kotlin("jvm")
+    id("application")
+    id("org.jetbrains.kotlin.jvm")
 }
 
 val artifactType = Attribute.of("artifactType", String::class.java)
@@ -40,7 +40,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "myapp.AppKt"
+    mainClass.set("myapp.AppKt")
 }
 
 
