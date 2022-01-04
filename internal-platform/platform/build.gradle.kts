@@ -1,10 +1,8 @@
 plugins {
-    `java-platform`
+    id("java-platform")
 }
 
-dependencies {
-    constraints {
-        api("com.google.guava:guava:28.1-jre")
-        api("org.apache.commons:commons-lang3:3.8")
-    }
+dependencies.constraints {
+    api("com.google.guava:guava:28.1-jre")
+    api("org.apache.commons:commons-lang3:3.8")
 }
