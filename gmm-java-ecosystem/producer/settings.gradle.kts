@@ -1,17 +1,10 @@
-rootProject.name = "producer"
-
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.namespace == "com.android") {
-                useModule("com.android.tools.build:gradle:${requested.version}")
-            }
-        }
-    }
+    repositories.gradlePluginPortal()
+    repositories.google()
+}
+dependencyResolutionManagement {
+    repositories.mavenCentral()
+    repositories.google()
 }
 
 include("java-library")

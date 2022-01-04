@@ -1,26 +1,21 @@
 plugins {
     id("com.android.library")
-    kotlin("multiplatform")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 android {
-    compileSdkVersion(29)
-    buildToolsVersion = "29.0.2"
+    compileSdk = 29
     defaultConfig {
-        minSdkVersion(16)
-        targetSdkVersion(29)
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 16
+        targetSdk = 29
     }
-    flavorDimensions("org.gradle.example.my-own-flavor")
+    flavorDimensions.add("org.gradle.example.my-own-flavor")
     productFlavors {
         create("demo") {
-            setDimension("org.gradle.example.my-own-flavor")
-            versionNameSuffix = "-demo"
+            dimension = "org.gradle.example.my-own-flavor"
         }
         create("full") {
-            setDimension("org.gradle.example.my-own-flavor")
-            versionNameSuffix = "-full"
+            dimension= "org.gradle.example.my-own-flavor"
         }
     }
 
@@ -39,13 +34,6 @@ kotlin {
 
 dependencies {
     "commonMainImplementation"(kotlin("stdlib-common"))
-    // "jvmMainImplementation"(kotlin("stdlib"))
     "androidMainImplementation"(kotlin("stdlib"))
     "jsMainImplementation"(kotlin("stdlib-js"))
-}
-
-afterEvaluate {
-    publishing {
-        publications.forEach { println("Koltin-Native publication: ${it.name}") }
-    }
 }

@@ -1,33 +1,16 @@
 plugins {
-    id("com.android.library") version "3.6.0-rc03" apply false
-    kotlin("jvm") version "1.3.61" apply false
-    kotlin("android") version "1.3.61" apply false
-    kotlin("multiplatform") version "1.3.61" apply false
+    id("com.android.library") version "7.0.4" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.6.10" apply false
+    id("org.jetbrains.kotlin.android") version "1.6.10" apply false
+    id("org.jetbrains.kotlin.multiplatform") version "1.6.10" apply false
 }
 
 subprojects {
-    apply(plugin = "maven-publish")
-
-    repositories {
-        google()
-        jcenter()
-    }
-
     group = "example"
     version = "1.0"
 
-    extensions.getByType<PublishingExtension>().apply {
-        repositories {
-            maven {
-                setUrl(File(rootDir, "repo"))
-            }
-        }
-    }
-
-    plugins.withType<JavaPlugin> {
-        extensions.configure<JavaPluginExtension> {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
+    apply(plugin = "maven-publish")
+    the<PublishingExtension>().apply {
+        repositories.maven(File(rootDir, "repo"))
     }
 }

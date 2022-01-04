@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 kotlin {
@@ -13,10 +13,4 @@ dependencies {
     "commonMainImplementation"(kotlin("stdlib-common"))
     "jvmMainImplementation"(kotlin("stdlib"))
     "jsMainImplementation"(kotlin("stdlib-js"))
-}
-
-afterEvaluate {
-    publishing {
-        publications.forEach { println("Koltin-Native publication: ${it.name}") }
-    }
 }
