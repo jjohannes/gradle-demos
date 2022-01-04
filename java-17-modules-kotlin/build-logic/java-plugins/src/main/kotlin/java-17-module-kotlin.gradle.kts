@@ -17,7 +17,7 @@ tasks.compileJava {
     options.compilerArgs = listOf("--patch-module", "$moduleName=${sourceSets.main.get().output.asPath}")
 }
 
-// Testing with JUnit5 (which is available in modules) ==
+// Testing with JUnit5 (which is available in modules)
 tasks.compileTestKotlin {
     // Make sure only module Jars are on the classpath and not the classes folders of the current project
     classpath = configurations.testCompileClasspath.get()
@@ -53,4 +53,3 @@ dependencies.constraints {
         because("Module: io.github.classgraph")
     }
 }
-
