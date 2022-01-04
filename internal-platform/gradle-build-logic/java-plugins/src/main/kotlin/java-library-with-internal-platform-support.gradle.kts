@@ -16,8 +16,6 @@ configurations.runtimeClasspath.get().extendsFrom(internal)
 configurations.testCompileClasspath.get().extendsFrom(internal)
 configurations.testRuntimeClasspath.get().extendsFrom(internal)
 
-
-
 publishing {
     publications.create<MavenPublication>("library") {
         from(components["java"])
@@ -27,6 +25,5 @@ publishing {
         }
     }
 
-    repositories.maven("file://${rootProject.rootDir}/repo")
+    repositories.maven(File(rootProject.rootDir, "repo"))
 }
-
