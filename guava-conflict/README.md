@@ -1,0 +1,2 @@
+- Run `./gradlew :dependencies` to see how conflicts involving Guava are resolved
+- Run `./gradlew :checkClasspath` to see which Jar files are selected in the end

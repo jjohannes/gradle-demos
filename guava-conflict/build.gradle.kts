@@ -1,8 +1,7 @@
 plugins {
-    `java-library`
-    id("de.jjohannes.missing-metadata-guava") version "0.1"
+    id("java-library")
+    id("de.jjohannes.missing-metadata-guava") version "0.5"
 }
-
 
 repositories {
     mavenCentral()
@@ -14,10 +13,10 @@ dependencies {
     implementation("com.google.api-client:google-api-client:1.30.7")
 }
 
-tasks.create("checkClasspath") {
+tasks.register("checkClasspath") {
     doLast {
-        val compile = configurations["compileClasspath"].map { it.name }
-        val rt = configurations["runtimeClasspath"].map { it.name }
+        val compile = configurations.compileClasspath.get().map { it.name }
+        val rt = configurations.runtimeClasspath.get().map { it.name }
         println("=== JARs on compile classpath ===")
         compile.forEach { println("- $it") }
         println()
