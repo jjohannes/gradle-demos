@@ -24,6 +24,6 @@ tasks.register("printAllSources") {
 
 tasks.sourcesJar {
     from(configurations.sourcesPath.get().incoming.artifactView {
-        attributes.attribute(Attribute.of("artifactType", String::class.java), "java-sources-directory")
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, "java-sources-directory")
     }.files)
 }

@@ -1,5 +1,3 @@
-rootProject.name = "sources-variants"
-
 pluginManagement {
     includeBuild("build-logic")
 }

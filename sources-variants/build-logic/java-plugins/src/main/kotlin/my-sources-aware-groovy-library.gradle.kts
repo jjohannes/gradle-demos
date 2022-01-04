@@ -10,7 +10,7 @@ configurations.named("sourcesElements") {
     // include sources of dependencies
     extendsFrom(configurations.implementation.get())
     outgoing.variants.create("sourcesDirectory") {
-        attributes.attribute(Attribute.of("artifactType", String::class.java), "java-sources-directory")
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, "java-sources-directory")
         sourceSets.main.get().java.srcDirs.forEach {
             artifact(it)
         }
