@@ -1,5 +1,9 @@
-rootProject.name = "webdav-plugin-example"
+pluginManagement {
+    includeBuild("webdav-plugin")
+}
+
+dependencyResolutionManagement {
+    repositories.mavenCentral()
+}
 
 include("my-library")
-
-includeBuild("webdav-plugin")

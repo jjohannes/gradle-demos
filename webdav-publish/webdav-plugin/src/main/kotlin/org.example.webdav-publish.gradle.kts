@@ -14,9 +14,7 @@ publishing {
         name = "localStaging"
         url = uri(localStagingRepo)
     }
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
-    }
+    publications.create<MavenPublication>("maven").from(components["java"])
 }
 
 val publishWebdav = tasks.register<PublishWebDav>("publishWebdav") {

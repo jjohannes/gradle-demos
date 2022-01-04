@@ -6,10 +6,6 @@ plugins {
 version = "1.0"
 group = "org.test"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation("com.google.guava:guava:26.0-jre")
 }
