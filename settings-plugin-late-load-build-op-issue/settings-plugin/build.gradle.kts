@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.gradle:gradle-enterprise-gradle-plugin:3.7.1")
+    implementation("com.gradle:gradle-enterprise-gradle-plugin:3.10")
 }
 
 gradlePlugin {
