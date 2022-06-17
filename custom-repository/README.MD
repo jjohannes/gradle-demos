@@ -1,0 +1,1 @@
+Example that shows how to treat an arbitrary URL as reporitory for downloading and caching a file with Gradle's dependency managment.
