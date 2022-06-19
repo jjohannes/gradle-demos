@@ -13,6 +13,7 @@ Each folder is a self-containted demo project:
 - [aggregated-publish](aggregated-publish)
 - [android-multi-component](android-multi-component)
 - [classloader-isolation-junit-vintage-engine](classloader-isolation-junit-vintage-engine)
+- [custom-repository](custom-repository)
 - [code-gen-with-kotlin](code-gen-with-kotlin)
 - [gmm-java-ecosystem](gmm-java-ecosystem)
 - [guava-conflict](guava-conflict)
