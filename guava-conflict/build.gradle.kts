@@ -1,6 +1,6 @@
 plugins {
     id("java-library")
-    id("de.jjohannes.missing-metadata-guava") version "0.5"
+    id("org.gradlex.java-ecosystem-capabilities") version "1.1"
 }
 
 repositories {

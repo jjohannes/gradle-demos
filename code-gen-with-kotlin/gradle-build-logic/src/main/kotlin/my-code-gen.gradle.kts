@@ -1,4 +1,3 @@
-import de.jjohannes.codegen.CodeGeneratorConfig
 import de.jjohannes.codegen.GenerateCodeTask
 
 task<GenerateCodeTask>("generateCode") {

@@ -5,36 +5,48 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.the
 
 abstract class PublishingComponents(private val project: Project, private val softwareComponentFactory: SoftwareComponentFactory) {
 
-    // use experimental API to ease setup of Configurations and Attributes
-    val jvm = project.extensions.create(org.gradle.api.plugins.jvm.internal.JvmPluginExtension::class, "jvm", org.gradle.api.plugins.jvm.internal.DefaultJvmPluginExtension::class)
-
     fun register(library: String) {
-        val bucket = "${library}Artifact"
-        val resolver = jvm.createResolvableConfiguration("${library}ArtifactPath") {
-            requiresJavaLibrariesAPI()
-            usingDependencyBucket(bucket)
+        val bucket = project.configurations.create("${library}Artifact") {
+            isCanBeConsumed = false
+            isCanBeResolved = false
+        }
+        val resolver = project.configurations.create("${library}ArtifactPath") {
+            isCanBeConsumed = false
+            isCanBeResolved = true
+
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_API))
+
+            extendsFrom(bucket)
         }
 
-        project.dependencies.add(bucket, project.project(":${library}"))
-        val outgoingRuntime = jvm.createOutgoingElements("${library}RuntimeElements") {
-            providesAttributes {
-                runtimeUsage().library().asJar()
-            }
-            artifact(AggregatePublishArtifact(library, resolver))
+        project.dependencies.add(bucket.name, project.project(":${library}"))
+        val outgoingRuntime = project.configurations.create("${library}RuntimeElements") {
+
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
+
+            outgoing.artifact(AggregatePublishArtifact(library, resolver))
         }
-        val outgoingApi = jvm.createOutgoingElements("${library}ApiElements") {
-            providesAttributes {
-                apiUsage().library().asJar()
-            }
-            artifact(AggregatePublishArtifact(library, resolver))
+        val outgoingApi = project.configurations.create("${library}ApiElements") {
+
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_API))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
+
+            outgoing.artifact(AggregatePublishArtifact(library, resolver))
         }
 
         val component = softwareComponentFactory.adhoc(library).apply {
