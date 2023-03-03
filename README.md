@@ -11,7 +11,6 @@ Each folder is a self-contained demo project:
 
 - [aggregated-javadoc](aggregated-javadoc)
 - [aggregated-publish](aggregated-publish)
-- [android-multi-component](android-multi-component)
 - [classloader-isolation-junit-vintage-engine](classloader-isolation-junit-vintage-engine)
 - [code-gen-with-kotlin](code-gen-with-kotlin)
 - [custom-repository](custom-repository)
@@ -22,7 +21,6 @@ Each folder is a self-contained demo project:
 - [java-17](java-17)
 - [java-17-modules-kotlin](java-17-modules-kotlin)
 - [java-19](java-19)
-- [settings-plugin-late-load-build-op-issue](settings-plugin-late-load-build-op-issue)
 - [share-test-jar](share-test-jar)
 - [sources-variants](sources-variants)
 - [variants-with-additional-artifacts](variants-with-additional-artifacts)
