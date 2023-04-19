@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation("org.junit.vintage:junit-vintage-engine:5.8.0")
+    implementation("org.junit.vintage:junit-vintage-engine:5.9.2")
 }

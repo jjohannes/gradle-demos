@@ -20,7 +20,7 @@ tasks.compileJava {
 // Testing with JUnit5 (which is available in modules)
 tasks.compileTestKotlin {
     // Make sure only module Jars are on the classpath and not the classes folders of the current project
-    classpath = configurations.testCompileClasspath.get()
+    // libraries.from(configurations.testCompileClasspath)
 }
 tasks.compileTestJava {
     // Compiling module-info in the 'test/java' folder needs to see already compiled Kotlin code
