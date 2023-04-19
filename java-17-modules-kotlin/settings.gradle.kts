@@ -5,7 +5,7 @@ dependencyResolutionManagement {
 }
 
 pluginManagement {
-    includeBuild("build-logic")
+    includeBuild("gradle/plugins")
 }
 
 include("moduleone")

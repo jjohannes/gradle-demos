@@ -20,7 +20,7 @@ tasks.compileJava {
 // Testing with JUnit5 (which is available in modules)
 tasks.compileTestKotlin {
     // Make sure only module Jars are on the classpath and not the classes folders of the current project
-    // libraries.from(configurations.testCompileClasspath)
+    libraries.setFrom(configurations.testCompileClasspath.get().filter { f -> f.isFile })
 }
 tasks.compileTestJava {
     // Compiling module-info in the 'test/java' folder needs to see already compiled Kotlin code
@@ -34,7 +34,7 @@ val testJar = tasks.register<Jar>(sourceSets.test.get().jarTaskName) {
     from(sourceSets.test.get().output)
 }
 tasks.test {
-    classpath = configurations.testRuntimeClasspath.get() + files(testJar)
+    classpath = configurations.testRuntimeClasspath.get().filter { f -> f.isFile } + files(testJar)
     useJUnitPlatform()
     testLogging.showStandardStreams = true
 }
