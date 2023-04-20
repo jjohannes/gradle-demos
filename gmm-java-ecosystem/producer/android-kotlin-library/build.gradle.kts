@@ -1,25 +1,39 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    compileSdk = 29
+    namespace = "example.androidkotlinlib"
+    compileSdk = 33
     defaultConfig {
         minSdk = 16
-        targetSdk = 29
+    }
+    publishing {
+        multipleVariants {
+            allVariants()
+        }
     }
 }
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 
 dependencies {
     implementation(kotlin("stdlib"))
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("lib") {
-                from(components["all"])
+publishing {
+    publications {
+        create<MavenPublication>("lib") {
+            afterEvaluate {
+                from(components["default"])
             }
         }
     }

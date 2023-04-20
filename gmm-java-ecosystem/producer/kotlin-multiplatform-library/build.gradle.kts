@@ -4,7 +4,9 @@ plugins {
 
 kotlin {
     jvm()
-    js()
+    js(IR) {
+        browser()
+    }
     macosX64()
     linuxX64()
 }

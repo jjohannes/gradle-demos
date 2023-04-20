@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.gradle.example" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
@@ -8,6 +7,7 @@
         android:label="Example" >
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:label="Example" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

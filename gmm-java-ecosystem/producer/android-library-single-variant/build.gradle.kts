@@ -3,10 +3,10 @@ plugins {
 }
 
 android {
-    compileSdk = 29
+    namespace = "example.androidlibsingle"
+    compileSdk = 33
     defaultConfig {
         minSdk = 16
-        targetSdk = 29
     }
     flavorDimensions.add("org.gradle.example.my-own-flavor")
     productFlavors {
@@ -17,13 +17,15 @@ android {
             dimension = "org.gradle.example.my-own-flavor"
         }
     }
-
+    publishing {
+        singleVariant("fullRelease")
+    }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("lib") {
+publishing {
+    publications {
+        create<MavenPublication>("lib") {
+            afterEvaluate {
                 from(components["fullRelease"])
             }
         }

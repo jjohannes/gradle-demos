@@ -1,13 +1,15 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.multiplatform")
 }
 
 android {
-    compileSdk = 29
+    namespace = "example.kotlinlibmpandroid"
+    compileSdk = 33
     defaultConfig {
         minSdk = 16
-        targetSdk = 29
     }
     flavorDimensions.add("org.gradle.example.my-own-flavor")
     productFlavors {
@@ -23,12 +25,20 @@ android {
 
 kotlin {
     // jvm()
-    js()
+    js(IR) {
+        browser()
+    }
     macosX64()
     linuxX64()
     android {
         publishLibraryVariants("fullRelease", "demoRelease",
                 "fullDebug", "demoDebug")
+    }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
