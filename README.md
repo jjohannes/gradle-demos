@@ -14,6 +14,7 @@ Each folder is a self-contained demo project:
 - [classloader-isolation-junit-vintage-engine](classloader-isolation-junit-vintage-engine)
 - [code-gen-with-kotlin](code-gen-with-kotlin)
 - [custom-repository](custom-repository)
+- [dependency-constraints](dependency-constraints)
 - [extending-publications](extending-publications)
 - [gmm-java-ecosystem](gmm-java-ecosystem)
 - [guava-conflict](guava-conflict)
