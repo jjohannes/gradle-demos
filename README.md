@@ -22,6 +22,7 @@ Each folder is a self-contained demo project:
 - [java-17](java-17)
 - [java-17-modules-kotlin](java-17-modules-kotlin)
 - [java-19](java-19)
+- [plugin-versioning](plugin-versioning)
 - [share-test-jar](share-test-jar)
 - [sources-variants](sources-variants)
 - [variants-with-additional-artifacts](variants-with-additional-artifacts)
