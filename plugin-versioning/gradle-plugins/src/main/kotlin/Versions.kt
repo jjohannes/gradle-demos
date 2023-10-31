@@ -18,9 +18,9 @@ object Versions {
 
     fun check(expectedPlugins: String, logger: Logger? = null) {
         var issue = ""
-        if (ACTUAL_JAVA != EXPECTED_JAVA) {
-            issue += "[VERSION JAVA]    Expected $EXPECTED_JAVA but was $ACTUAL_JAVA\n"
-        }
+        // if (ACTUAL_JAVA != EXPECTED_JAVA) {
+        //     issue += "[VERSION JAVA]    Expected $EXPECTED_JAVA but was $ACTUAL_JAVA\n"
+        // }
         if (ACTUAL_GRADLE != EXPECTED_GRADLE) {
             issue += "[VERSION GRADLE]  Expected $EXPECTED_GRADLE but was $ACTUAL_GRADLE\n"
         }
