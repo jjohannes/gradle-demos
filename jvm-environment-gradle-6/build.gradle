@@ -1,0 +1,14 @@
+// If you do not use 'buildSrc' or another included build-logic build
+
+// allprojects {
+//     plugins.withId("java") {
+//         sourceSets.all {
+//             configurations.getByName(runtimeClasspathConfigurationName) {
+//                 attributes.attribute(Attribute.of("org.gradle.jvm.environment", String), "standard-jvm")
+//             }
+//             configurations.getByName(compileClasspathConfigurationName) {
+//                 attributes.attribute(Attribute.of("org.gradle.jvm.environment", String), "standard-jvm")
+//             }
+//         }
+//     }
+// }
