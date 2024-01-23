@@ -1,0 +1,70 @@
+import org.gradle.api.plugins.jvm.internal.JvmLanguageUtilities
+import java.nio.file.Files
+
+// Move everything from this 'build.gradle' into a convention plugin to use it for multiple subprojects
+plugins {
+    id 'java-library'
+    id 'org.gradlex.java-module-dependencies' version '1.5'
+    id 'org.gradlex.java-module-testing' version '1.3'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+def mainJavaVersion = 17
+def additionalJavaVersion = 21
+
+repositories {
+    mavenCentral()
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes('Multi-Release': true)
+    }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(mainJavaVersion)
+}
+
+// Use 'services.get(JvmLanguageUtilities).registerJvmLanguageSourceDirectory' due to missing public API
+// -> https://github.com/gradle/gradle/issues/727 / https://github.com/gradle/gradle/issues/26562 / scheduled for Gradle 8.8
+services.get(JvmLanguageUtilities).registerJvmLanguageSourceDirectory(sourceSets.main, "java$additionalJavaVersion") {
+    it.compiledWithJava {
+        javaCompiler.set(javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(additionalJavaVersion)
+        })
+        classpath = sourceSets.main.compileClasspath + files(tasks.named('compileJava'))
+        doLast {
+            def destRoot = destinationDirectory.get().asFile
+            def destVersions = new File(destRoot, "META-INF/versions/$additionalJavaVersion")
+            destVersions.deleteDir()
+            destVersions.mkdirs()
+            destRoot.listFiles()?.each {
+                if (it.name != "META-INF") {
+                    Files.move(it.toPath(), new File(destVersions, it.name).toPath())
+                }
+            }
+        }
+    }
+}
+
+
+testing {
+    suites.test {
+        useJUnitJupiter()
+
+        // Would be great to have 'targets.register' here. Planned for the future.
+        // -> https://github.com/gradle/gradle/issues/25808
+        tasks.register("test$additionalJavaVersion", Test) {
+            useJUnitPlatform()
+            testClassesDirs = sources.output.classesDirs
+            classpath = configurations[sources.runtimeClasspathConfigurationName] + files(tasks.named('testJar'))
+            javaLauncher.set(javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(additionalJavaVersion)
+            })
+            group = 'verification'
+        }
+    }
+}

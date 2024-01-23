@@ -1,0 +1,3 @@
+includeBuild('.') // https://github.com/gradlex-org/java-module-dependencies/issues/26
+
+include 'mr-library'
