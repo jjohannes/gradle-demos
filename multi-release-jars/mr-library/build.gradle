@@ -53,18 +53,13 @@ services.get(JvmLanguageUtilities).registerJvmLanguageSourceDirectory(sourceSets
 
 testing {
     suites.test {
-        useJUnitJupiter()
-
-        // Would be great to have 'targets.register' here. Planned for the future.
-        // -> https://github.com/gradle/gradle/issues/25808
-        tasks.register("test$additionalJavaVersion", Test) {
-            useJUnitPlatform()
-            testClassesDirs = sources.output.classesDirs
-            classpath = configurations[sources.runtimeClasspathConfigurationName] + files(tasks.named('testJar'))
-            javaLauncher.set(javaToolchains.launcherFor {
-                languageVersion = JavaLanguageVersion.of(additionalJavaVersion)
-            })
-            group = 'verification'
+        targets.register("test$additionalJavaVersion") {
+            testTask.configure {
+                javaLauncher.set(javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(additionalJavaVersion)
+                })
+                group = 'verification'
+            }
         }
     }
 }
