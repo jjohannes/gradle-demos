@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    maven {
+        url = 'repo'
+        metadataSources { gradleMetadata() }
+    }
+    mavenCentral()
+}
+
+dependencies {
+    api platform('foo.platform:main:1.0')
+    api platform('foo.platform:externals') // direct dependency to endorse strict versions
+    api 'foo.bar:module'
+
+    // Adding the following solves the problem, as the version of the platform is known upfront:
+    //
+    // api platform('foo.platform:externals:1.0')
+    
+    // Alternatively, adding the following AND removing the 'foo.bar:module:1.0' constraint from
+    // 'repo/foo/platform/main/1.0/main-1.0.module' solves the problem as then
+    // 'foo.platform:main:1.0' no longer is a parent of 'foo.bar:module:1.0'
+    //
+    // api 'foo.bar:module:1.0'
+}

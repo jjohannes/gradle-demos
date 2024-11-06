@@ -1,0 +1,29 @@
+{
+    "formatVersion": "1.1",
+    "component": {
+        "group": "foo.platform",
+        "module": "main",
+        "version": "1.0"
+    },
+   "variants": [
+        {
+            "name": "runtime",
+            "attributes": {
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.category": "platform"
+            },
+            "dependencyConstraints": [
+                {
+                    "group": "foo.platform",
+                    "module": "externals",
+                    "version": { "requires": "1.0" }
+                },
+                {
+                    "group": "foo.bar",
+                    "module": "module",
+                    "version": { "requires": "1.0" }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "formatVersion": "1.1",
+    "component": {
+        "group": "foo.bar",
+        "module": "module",
+        "version": "1.0"
+    },
+   "variants": [
+        {
+            "name": "runtime",
+            "attributes": {
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.category": "library",
+                "org.gradle.libraryelements": "jar"
+            },
+            "dependencies": [
+                {
+                    "group": "org.eclipse.jetty",
+                    "module": "jetty-util"
+                }
+            ]
+        }
+    ]
+}
