@@ -23,6 +23,7 @@ Each folder is a self-contained demo project:
 - [java-17-modules-kotlin](java-17-modules-kotlin)
 - [java-19](java-19)
 - [jvm-environment-gradle-6](jvm-environment-gradle-6)
+- [log-to-file](log-to-file)
 - [multi-release-jars](multi-release-jars)
 - [plugin-versioning](plugin-versioning)
 - [publish-with-timestamp-version](publish-with-timestamp-version)
