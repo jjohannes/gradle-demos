@@ -12,14 +12,13 @@ import org.gradle.internal.operations.OperationProgressEvent;
 import org.gradle.internal.operations.OperationStartEvent;
 import org.gradle.operations.lifecycle.FinishRootBuildTreeBuildOperationType;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.PrintWriter;
 import java.util.stream.Collectors;
-
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.CREATE;
 
 @NonNullApi
 public abstract class ToFileLoggingListener implements BuildOperationListener {
@@ -27,11 +26,15 @@ public abstract class ToFileLoggingListener implements BuildOperationListener {
     @Inject
     protected abstract BuildOperationListenerManager getBuildOperationListenerManager();
 
-    private final File logFile;
+    private final FileWriter logFileWriter;
+    private final PrintWriter logPrintWriter;
 
     @Inject
-    public ToFileLoggingListener(File logFile) {
-        this.logFile = logFile;
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public ToFileLoggingListener(File logFile) throws IOException {
+        logFile.getParentFile().mkdirs();
+        logFileWriter = new FileWriter(logFile);
+        logPrintWriter = new PrintWriter(logFileWriter);
     }
 
     @Override
@@ -41,29 +44,43 @@ public abstract class ToFileLoggingListener implements BuildOperationListener {
     @Override
     public void progress(OperationIdentifier operationIdentifier, OperationProgressEvent progressEvent) {
         Object details = progressEvent.getDetails();
+        String plainLogOutput = null;
+
         if (details instanceof StyledTextOutputEvent) {
             StyledTextOutputEvent styledLogOutput = (StyledTextOutputEvent) details;
-            String plainLogOutput = styledLogOutput.getSpans().stream().map(StyledTextOutputEvent.Span::getText).collect(Collectors.joining());
-            try {
-                Files.writeString(logFile.toPath(), plainLogOutput, CREATE, APPEND);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            plainLogOutput = styledLogOutput.getSpans().stream().map(StyledTextOutputEvent.Span::getText).collect(Collectors.joining());
         } else if (details instanceof LogEvent) {
             LogEvent logEvent = (LogEvent) details;
-            String plainLogOutput = logEvent.getMessage() + "\n";
-             try {
-                Files.writeString(logFile.toPath(), plainLogOutput, CREATE, APPEND);
+            plainLogOutput = logEvent.getMessage() + "\n";
+        }
+
+        printToLog(plainLogOutput, null);
+    }
+
+    @Override
+    public void finished(BuildOperationDescriptor buildOperation, OperationFinishEvent finishEvent) {
+        printToLog(null, finishEvent.getFailure());
+        if (finishEvent.getResult() instanceof FinishRootBuildTreeBuildOperationType.Result) {
+            getBuildOperationListenerManager().removeListener(this);
+            try {
+                logPrintWriter.close();
+                logFileWriter.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    @Override
-    public void finished(BuildOperationDescriptor buildOperation, OperationFinishEvent finishEvent) {
-        if (finishEvent.getResult() instanceof FinishRootBuildTreeBuildOperationType.Result) {
-            getBuildOperationListenerManager().removeListener(this);
+    private void printToLog(@Nullable String plainLogOutput, @Nullable Throwable exception) {
+        try {
+            if (plainLogOutput != null) {
+                logFileWriter.write(plainLogOutput);
+            }
+            if (exception != null) {
+                exception.printStackTrace(logPrintWriter);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
