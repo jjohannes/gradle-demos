@@ -1,5 +1,4 @@
 # Tool Installation Task
 
-Extract tool Zip files through a tool installation task that make sure the extraction is not done again,
-even though Gradle's standard UP-TO-DATE check re-runs the task due to changes on Gradle's plugin
-classpath (which is considered a task implementation change).
+Extract tool Zip files through a tool installation build service that make sure extraction is only performed once,
+by using Gradle's UP-TO-DATE check mechanics under the hood in the build service.
