@@ -13,7 +13,7 @@ tasks.register<software.onepiece.toolchain.tasks.PrintToolInfo>("printKaraf") {
 
 abstract class ToolBasedExec : Exec(), software.onepiece.toolchain.ToolUsingTask {
     override fun exec() {
-        val tools = toolInstall.get().getTools(toolIds.get())
+        val tools = toolInstall.get().getTools(toolIds.get(), toolServices())
         setExecutable(tools.single().installationDirectory.file(tools.single().executable).get().asFile)
         super.exec()
     }

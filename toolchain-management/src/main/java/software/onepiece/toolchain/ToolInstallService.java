@@ -28,23 +28,23 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
     @Inject
     protected abstract FileSystemOperations getFiles();
 
-    public List<ToolInfo> getTools(List<String> ids) {
-        return ids.stream().map(this::getTool).collect(Collectors.toList());
+    public List<ToolInfo> getTools(List<String> ids, ToolInstallServicesProvider services) {
+        return ids.stream().map((String id) -> getTool(id, services)).collect(Collectors.toList());
     }
 
-    private ToolInfo getTool(String id) {
+    private ToolInfo getTool(String id, ToolInstallServicesProvider services) {
         try {
             ToolInfo tool = getParameters().getTools().getting(id).get();
-            File toolArchive = createArchiveResolver(tool).getSingleFile();
+            File toolArchive = createArchiveResolver(tool, services).getSingleFile();
             File hashFile = hashFile(tool, toolArchive);
             String previousSnapshot = hashFile.exists() ? Files.readString(hashFile.toPath()) : "";
-            String currentSnapshot = readSnapshot(tool);
+            String currentSnapshot = readSnapshot(tool, services);
 
             boolean installationInvalid = !currentSnapshot.equals(previousSnapshot);
 
             if (installationInvalid) {
                 LOGGER.lifecycle("Extracting: " + toolArchive.getName());
-                doExtractFile(tool, toolArchive);
+                doExtractFile(tool, toolArchive, services);
             } else {
                 LOGGER.lifecycle("UP-TO-DATE: " + toolArchive.getName());
             }
@@ -55,8 +55,7 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         }
     }
 
-    private FileCollection createArchiveResolver(ToolInfo tool) {
-        ToolInstallServicesProvider services = getParameters().getToolServices().get();
+    private FileCollection createArchiveResolver(ToolInfo tool, ToolInstallServicesProvider services) {
         DependencyResolutionServices dmServices = services.getDependencyManagementServices().newDetachedResolver(
                 services.getDependencyFileResolver(),
                 services.getFileCollectionFactory(),
@@ -101,7 +100,7 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         return resolver;
     }
 
-    private void doExtractFile(ToolInfo tool, File toolArchive) throws IOException {
+    private void doExtractFile(ToolInfo tool, File toolArchive, ToolInstallServicesProvider services) throws IOException {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
 
         getFiles().delete(f -> f.delete(installDir));
@@ -109,16 +108,16 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
             zipFile.extractAll(installDir.getAbsolutePath());
         }
 
-        FileSystemAccess fileSystemAccess = getParameters().getToolServices().get().getFileSystemAccess();
+        FileSystemAccess fileSystemAccess = services.getFileSystemAccess();
         fileSystemAccess.invalidate(singleton(installDir.getAbsolutePath()));
 
         Files.createDirectories(hashFile(tool, toolArchive).getParentFile().toPath());
-        Files.writeString(hashFile(tool, toolArchive).toPath(), readSnapshot(tool));
+        Files.writeString(hashFile(tool, toolArchive).toPath(), readSnapshot(tool, services));
     }
 
-    private String readSnapshot(ToolInfo tool) {
+    private String readSnapshot(ToolInfo tool, ToolInstallServicesProvider services) {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
-        FileSystemAccess fileSystemAccess = getParameters().getToolServices().get().getFileSystemAccess();
+        FileSystemAccess fileSystemAccess = services.getFileSystemAccess();
         return fileSystemAccess.read(installDir.getAbsolutePath()).getHash().toString();
     }
 

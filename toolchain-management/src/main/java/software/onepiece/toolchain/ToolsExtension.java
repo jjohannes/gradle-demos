@@ -28,7 +28,6 @@ public abstract class ToolsExtension {
         getGradle().getSharedServices().registerIfAbsent("toolInstall", ToolInstallService.class, spec -> {
             spec.getParameters().getRepositories().set(getRepositories());
             spec.getParameters().getTools().set(getTools());
-            spec.getParameters().getToolServices().set(getObjects().newInstance(ToolInstallServicesProvider.class));
         });
     }
 

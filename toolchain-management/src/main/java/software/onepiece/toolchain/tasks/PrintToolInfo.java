@@ -18,7 +18,7 @@ abstract public class PrintToolInfo extends DefaultTask implements ToolUsingTask
 
     @TaskAction
     protected void execute() throws IOException {
-        List<ToolInfo> tools = getToolInstall().get().getTools(getToolIds().get());
+        List<ToolInfo> tools = getToolInstall().get().getTools(getToolIds().get(), toolServices());
 
         Files.writeString(getResult().get().getAsFile().toPath(),
                 "Used: " + tools.stream().map(t -> t.getExecutable().get()).collect(Collectors.joining()));
