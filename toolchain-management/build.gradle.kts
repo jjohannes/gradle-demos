@@ -2,6 +2,13 @@ plugins {
     `java-gradle-plugin`
 }
 
+group = "software.onepiece.gradle"
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(11)
+}
+
+
 gradlePlugin.plugins.create("software.onepiece.toolchain-management") {
     id = name
     implementationClass = "software.onepiece.toolchain.ToolchainManagementPlugin"

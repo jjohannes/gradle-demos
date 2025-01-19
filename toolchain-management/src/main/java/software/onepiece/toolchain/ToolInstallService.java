@@ -17,6 +17,8 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
 
@@ -26,7 +28,11 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
     @Inject
     protected abstract FileSystemOperations getFiles();
 
-    public ToolInfo getTool(String id) {
+    public List<ToolInfo> getTools(List<String> ids) {
+        return ids.stream().map(this::getTool).collect(Collectors.toList());
+    }
+
+    private ToolInfo getTool(String id) {
         try {
             ToolInfo tool = getParameters().getTools().getting(id).get();
             File toolArchive = createArchiveResolver(tool).getSingleFile();
@@ -89,7 +95,8 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         Configuration resolver = dmServices.getConfigurationContainer().resolvable("toolDownload").get();
         resolver.extendsFrom(tools);
 
-        dmServices.getDependencyHandler().add(tools.getName(), tool.getCoordinates().get());
+        String gav = tool.getGroup().get() + ":" + tool.getName().get() + ":" + tool.getVersion().get();
+        dmServices.getDependencyHandler().add(tools.getName(), gav);
 
         return resolver;
     }

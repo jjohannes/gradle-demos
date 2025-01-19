@@ -9,6 +9,8 @@ import software.onepiece.toolchain.ToolUsingTask;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Collectors;
 
 abstract public class PrintToolInfo extends DefaultTask implements ToolUsingTask {
     @OutputFile
@@ -16,9 +18,9 @@ abstract public class PrintToolInfo extends DefaultTask implements ToolUsingTask
 
     @TaskAction
     protected void execute() throws IOException {
-        ToolInfo tool = getToolInstall().get().getTool(getToolId().get());
+        List<ToolInfo> tools = getToolInstall().get().getTools(getToolIds().get());
 
         Files.writeString(getResult().get().getAsFile().toPath(),
-                "Did something with " + tool.getExecutable().get());
+                "Used: " + tools.stream().map(t -> t.getExecutable().get()).collect(Collectors.joining()));
     }
 }

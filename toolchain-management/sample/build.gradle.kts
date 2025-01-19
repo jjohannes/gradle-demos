@@ -1,11 +1,11 @@
 tasks.register<ToolBasedExec>("runJetty") {
-    toolId = "JETTY"
+    toolIds.add("JETTY")
     group = "build"
     isIgnoreExitValue = true
 }
 
 tasks.register<software.onepiece.toolchain.tasks.PrintToolInfo>("printKaraf") {
-    toolId = "KARAF"
+    toolIds.add("KARAF")
     group = "build"
     result = layout.buildDirectory.file("k-out.txt")
 }
@@ -13,8 +13,8 @@ tasks.register<software.onepiece.toolchain.tasks.PrintToolInfo>("printKaraf") {
 
 abstract class ToolBasedExec : Exec(), software.onepiece.toolchain.ToolUsingTask {
     override fun exec() {
-        val tool = toolInstall.get().getTool(toolId.get())
-        setExecutable(tool.installationDirectory.file(tool.executable).get().asFile)
+        val tools = toolInstall.get().getTools(toolIds.get())
+        setExecutable(tools.single().installationDirectory.file(tools.single().executable).get().asFile)
         super.exec()
     }
 }

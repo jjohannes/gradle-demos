@@ -44,13 +44,15 @@ public abstract class ToolsExtension {
     }
 
     public void register(String id, String group, String name, String version, String executable) {
-        String gav = group + ":" + name + ":" + version;
         ToolInfo tool = getObjects().newInstance(ToolInfo.class);
-        tool.getCoordinates().set(gav);
+        tool.getGroup().set(group);
+        tool.getName().set(name);
+        tool.getVersion().set(version);
         tool.getGradleUserHomeDir().set(getGradle().getGradleUserHomeDir());
         tool.getInstallationDirectory().set(
                 getLayout().getSettingsDirectory().dir("tools-installations/" + name + "-" + version));
         tool.getExecutable().set(executable);
         getTools().put(id, tool);
     }
+
 }
