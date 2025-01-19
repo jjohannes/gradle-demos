@@ -3,12 +3,13 @@ package software.onepiece.toolchain;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.initialization.Settings;
 
 @NonNullApi
-public abstract class ToolchainManagementPlugin implements Plugin<Project> {
+public abstract class ToolchainManagementPlugin implements Plugin<Settings> {
 
     @Override
-    public void apply(Project project) {
-        project.getExtensions().create("tools", ToolsExtension.class);
+    public void apply(Settings settings) {
+        settings.getExtensions().create("tools", ToolsExtension.class);
     }
 }

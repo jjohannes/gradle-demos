@@ -1,9 +1,7 @@
 package software.onepiece.toolchain;
 
 import org.gradle.api.Action;
-import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.file.BuildLayout;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
@@ -21,7 +19,7 @@ public abstract class ToolsExtension {
     protected abstract ObjectFactory getObjects();
 
     @Inject
-    protected abstract ProjectLayout getLayout();
+    protected abstract BuildLayout getLayout();
 
     @Inject
     protected abstract Gradle getGradle();
@@ -51,7 +49,7 @@ public abstract class ToolsExtension {
         tool.getCoordinates().set(gav);
         tool.getGradleUserHomeDir().set(getGradle().getGradleUserHomeDir());
         tool.getInstallationDirectory().set(
-                getLayout().getProjectDirectory().dir("tools-installations/" + name + "-" + version));
+                getLayout().getSettingsDirectory().dir("tools-installations/" + name + "-" + version));
         tool.getExecutable().set(executable);
         getTools().put(id, tool);
     }

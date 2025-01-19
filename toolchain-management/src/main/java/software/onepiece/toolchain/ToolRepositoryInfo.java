@@ -7,5 +7,4 @@ public interface ToolRepositoryInfo {
     Property<String> getPattern();
     Property<String> getUsername();
     Property<String> getPassword();
-
 }
