@@ -1,4 +1,4 @@
-package org.example;
+package software.onepiece.toolchain;
 
 import net.lingala.zip4j.ZipFile;
 import org.gradle.api.file.FileSystemOperations;
@@ -33,10 +33,10 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
             boolean installationInvalid = !currentSnapshot.equals(previousSnapshot);
 
             if (installationInvalid) {
-                LOGGER.lifecycle("Extracting: " + tool.getArchive().getSingleFile().getName());
+                LOGGER.lifecycle("Extracting: " + toolArchive(tool).getName());
                 doExtractFile(tool, fileSystemAccess);
             } else {
-                LOGGER.lifecycle("UP-TO-DATE: " + tool.getArchive().getSingleFile().getName());
+                LOGGER.lifecycle("UP-TO-DATE: " + toolArchive(tool).getName());
             }
 
             return tool;
@@ -45,18 +45,21 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         }
     }
 
+    private File toolArchive(ToolInfo tool) {
+        return tool.getArchive().getSingleFile();
+    }
+
     private void doExtractFile(ToolInfo tool, FileSystemAccess fileSystemAccess) throws IOException {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
 
         getFiles().delete(f -> f.delete(installDir));
-        try (ZipFile zipFile = new ZipFile(tool.getArchive().getSingleFile())) {
+        try (ZipFile zipFile = new ZipFile(toolArchive(tool))) {
             zipFile.extractAll(installDir.getAbsolutePath());
         }
 
         fileSystemAccess.invalidate(singleton(installDir.getAbsolutePath()));
 
-        //noinspection ResultOfMethodCallIgnored
-        hashFile(tool).getParentFile().mkdirs();
+        Files.createDirectories(hashFile(tool).getParentFile().toPath());
         Files.writeString(hashFile(tool).toPath(), readSnapshot(tool, fileSystemAccess));
     }
 
@@ -66,7 +69,7 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
     }
 
     private File hashFile(ToolInfo tool) {
-        File archive = tool.getArchive().getSingleFile();
+        File archive = toolArchive(tool);
         return tool.getGradleUserHomeDir().get().dir("artifact-extraction/" + archive.getName() + ".hash").getAsFile();
     }
 }

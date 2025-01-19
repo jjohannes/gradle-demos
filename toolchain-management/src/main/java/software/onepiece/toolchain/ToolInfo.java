@@ -1,4 +1,4 @@
-package org.example;
+package software.onepiece.toolchain;
 
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;

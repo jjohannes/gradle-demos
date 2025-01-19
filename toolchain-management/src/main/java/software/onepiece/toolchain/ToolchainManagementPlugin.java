@@ -1,17 +1,11 @@
-package org.example;
+package software.onepiece.toolchain;
 
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.model.ObjectFactory;
-
-import javax.inject.Inject;
 
 @NonNullApi
-public abstract class ToolInstallationPlugin implements Plugin<Project> {
-
-    @Inject
-    protected abstract ObjectFactory getObjects();
+public abstract class ToolchainManagementPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {

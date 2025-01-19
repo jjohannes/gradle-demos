@@ -1,21 +1,14 @@
-package org.example;
+package software.onepiece.toolchain;
 
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
-import org.gradle.api.file.Directory;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.TaskContainer;
-import org.gradle.api.tasks.TaskProvider;
-import org.gradle.internal.vfs.FileSystemAccess;
 
 import javax.inject.Inject;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public abstract class ToolsExtension {
 
@@ -43,8 +36,8 @@ public abstract class ToolsExtension {
     }
 
     public void register(String id, String group, String name, String version, String executable) {
-        Configuration resolver = getConfigurations().detachedConfiguration(getDependencies().create(
-                group + ":" + name + ":" + version));
+        String gav = group + ":" + name + ":" + version;
+        Configuration resolver = getConfigurations().detachedConfiguration(getDependencies().create(gav));
 
         ToolInfo tool = getObjects().newInstance(ToolInfo.class);
         tool.getArchive().from(resolver);
