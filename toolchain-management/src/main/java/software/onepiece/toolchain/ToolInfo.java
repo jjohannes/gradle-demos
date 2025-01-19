@@ -1,12 +1,11 @@
 package software.onepiece.toolchain;
 
-import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 
 public interface ToolInfo {
-    ConfigurableFileCollection getArchive();
+    Property<String> getCoordinates();
+    Property<String> getExecutable();
     DirectoryProperty getInstallationDirectory();
     DirectoryProperty getGradleUserHomeDir();
-    Property<String> getExecutable();
 }
