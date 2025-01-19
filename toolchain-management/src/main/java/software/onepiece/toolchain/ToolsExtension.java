@@ -29,6 +29,9 @@ public abstract class ToolsExtension {
             spec.getParameters().getRepositories().set(getRepositories());
             spec.getParameters().getTools().set(getTools());
         });
+
+        ToolsRegistryExtension toolsRegistry = getObjects().newInstance(ToolsRegistryExtension.class, getTools());
+        getGradle().getLifecycle().beforeProject(p -> p.getExtensions().add("toolsRegistry", toolsRegistry));
     }
 
     public void repository(String url) {
