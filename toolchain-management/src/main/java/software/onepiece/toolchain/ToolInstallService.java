@@ -28,6 +28,10 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
     @Inject
     protected abstract FileSystemOperations getFiles();
 
+    public List<ToolInfo> getTools(List<String> ids) {
+        return ids.stream().map((String id) -> getParameters().getTools().getting(id).get()).collect(Collectors.toList());
+    }
+
     public List<ToolInfo> getTools(List<String> ids, ToolInstallServicesProvider services) {
         return ids.stream().map((String id) -> getTool(id, services)).collect(Collectors.toList());
     }
@@ -37,14 +41,15 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
             ToolInfo tool = getParameters().getTools().getting(id).get();
             File toolArchive = createArchiveResolver(tool, services).getSingleFile();
             File hashFile = hashFile(tool, toolArchive);
-            String previousSnapshot = hashFile.exists() ? Files.readString(hashFile.toPath()) : "";
-            String currentSnapshot = readSnapshot(tool, services);
 
-            boolean installationInvalid = !currentSnapshot.equals(previousSnapshot);
-
-            if (installationInvalid) {
-                LOGGER.lifecycle("Extracting: " + toolArchive.getName());
-                doExtractFile(tool, toolArchive, services);
+            if (isInstallationInvalid(tool, hashFile, services)) {
+                synchronized (tool) {
+                    // still invalid after synchronize?
+                    if (isInstallationInvalid(tool, hashFile, services)) {
+                        LOGGER.lifecycle("Extracting: " + toolArchive.getName());
+                        doExtractFile(tool, toolArchive, services);
+                    }
+                }
             } else {
                 LOGGER.lifecycle("UP-TO-DATE: " + toolArchive.getName());
             }
@@ -53,6 +58,12 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean isInstallationInvalid(ToolInfo tool, File hashFile, ToolInstallServicesProvider services) throws IOException {
+        String previousSnapshot = hashFile.exists() ? Files.readString(hashFile.toPath()) : "";
+        String currentSnapshot = readSnapshot(tool, services);
+        return !currentSnapshot.equals(previousSnapshot);
     }
 
     private FileCollection createArchiveResolver(ToolInfo tool, ToolInstallServicesProvider services) {
