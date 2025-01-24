@@ -1,4 +1,6 @@
-import software.onepiece.toolchain.ToolUsingWorkAction
+import software.onepiece.toolchain.worker.ToolUsingWorkAction
+import software.onepiece.toolchain.task.ToolUsingTask
+import software.onepiece.toolchain.task.PrintToolInfo
 
 tasks.register<ToolBasedExec>("runJetty") {
     toolIds.add("JETTY")
@@ -6,19 +8,19 @@ tasks.register<ToolBasedExec>("runJetty") {
     isIgnoreExitValue = true
 }
 
-tasks.register<software.onepiece.toolchain.tasks.PrintToolInfo>("printKaraf") {
+tasks.register<PrintToolInfo>("printKaraf") {
     toolIds.add("KARAF")
     group = "build"
     result = layout.buildDirectory.file("k-out.txt")
 }
 
-tasks.register<software.onepiece.toolchain.tasks.PrintToolInfo>("printJETTY") {
+tasks.register<PrintToolInfo>("printJETTY") {
     toolIds.add("JETTY")
     group = "build"
     result = layout.buildDirectory.file("j-out.txt")
 }
 
-tasks.register<software.onepiece.toolchain.tasks.PrintToolInfo>("printJETTY2") {
+tasks.register<PrintToolInfo>("printJETTY2") {
     toolIds.add("JETTY")
     group = "build"
     result = layout.buildDirectory.file("j2-out.txt")
@@ -32,7 +34,7 @@ tasks.register("all") {
 }
 
 
-abstract class ToolBasedExec : Exec(), software.onepiece.toolchain.ToolUsingTask {
+abstract class ToolBasedExec : Exec(), ToolUsingTask {
 
     @get:Inject
     abstract val executor: WorkerExecutor

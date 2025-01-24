@@ -1,14 +1,13 @@
-package software.onepiece.toolchain.tasks;
+package software.onepiece.toolchain.worker;
 
 import org.gradle.api.file.RegularFileProperty;
-import software.onepiece.toolchain.ToolUsingWorkAction;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.stream.Collectors;
 
-abstract public class PrintToolWorkAction extends ToolUsingWorkAction<PrintToolWorkAction.Param> {
-    interface Param extends ToolUsingWorkAction.Param {
+abstract public class PrintToolWorkAction extends ToolUsingWorkAction<PrintToolWorkAction.Params> {
+    public interface Params extends ToolUsingWorkAction.Params {
         RegularFileProperty getResult();
     }
 

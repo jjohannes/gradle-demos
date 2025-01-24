@@ -1,4 +1,4 @@
-package software.onepiece.toolchain;
+package software.onepiece.toolchain.service;
 
 import org.gradle.api.internal.artifacts.DependencyManagementServices;
 import org.gradle.api.internal.file.FileCollectionFactory;

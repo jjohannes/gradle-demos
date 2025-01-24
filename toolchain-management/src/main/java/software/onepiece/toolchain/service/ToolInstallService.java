@@ -1,4 +1,4 @@
-package software.onepiece.toolchain;
+package software.onepiece.toolchain.service;
 
 import net.lingala.zip4j.ZipFile;
 import org.gradle.api.artifacts.Configuration;
@@ -12,6 +12,8 @@ import org.gradle.api.logging.Logger;
 import org.gradle.api.services.BuildService;
 import org.gradle.internal.vfs.FileSystemAccess;
 import org.slf4j.LoggerFactory;
+import software.onepiece.toolchain.ToolInfo;
+import software.onepiece.toolchain.ToolRepositoryInfo;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -39,19 +41,28 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
     private ToolInfo getTool(String id, ToolInstallServicesProvider services) {
         try {
             ToolInfo tool = getParameters().getTools().getting(id).get();
-            File toolArchive = createArchiveResolver(tool, services).getSingleFile();
-            File hashFile = hashFile(tool, toolArchive);
+            boolean useFromFolder = tool.getFromFolder().isPresent();
+
+            File from = useFromFolder
+                    ? new File(tool.getFromFolder().get())
+                    : createArchiveResolver(tool, services).getSingleFile();
+            File hashFile = hashFile(tool, from);
 
             if (isInstallationInvalid(tool, hashFile, services)) {
                 synchronized (tool) {
                     // still invalid after synchronize?
                     if (isInstallationInvalid(tool, hashFile, services)) {
-                        LOGGER.lifecycle("Extracting: " + toolArchive.getName());
-                        doExtractFile(tool, toolArchive, services);
+                        if (useFromFolder) {
+                            LOGGER.lifecycle("Copying: " + from.getName());
+                            copyFolder(tool, from, services);
+                        } else {
+                            LOGGER.lifecycle("Extracting: " + from.getName());
+                            extractFile(tool, from, services);
+                        }
                     }
                 }
             } else {
-                LOGGER.lifecycle("UP-TO-DATE: " + toolArchive.getName());
+                LOGGER.lifecycle("UP-TO-DATE: " + from.getName());
             }
 
             return tool;
@@ -111,28 +122,47 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         return resolver;
     }
 
-    private void doExtractFile(ToolInfo tool, File toolArchive, ToolInstallServicesProvider services) throws IOException {
+    private void copyFolder(ToolInfo tool, File from, ToolInstallServicesProvider services) throws IOException {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
-
         getFiles().delete(f -> f.delete(installDir));
-        try (ZipFile zipFile = new ZipFile(toolArchive)) {
+        getFiles().copy(spec -> {
+           spec.from(from);
+           spec.into(installDir);
+        });
+        snapshot(tool, from, services);
+    }
+
+    private void extractFile(ToolInfo tool, File from, ToolInstallServicesProvider services) throws IOException {
+        File installDir = tool.getInstallationDirectory().get().getAsFile();
+        getFiles().delete(f -> f.delete(installDir));
+        try (ZipFile zipFile = new ZipFile(from)) {
             zipFile.extractAll(installDir.getAbsolutePath());
         }
+        snapshot(tool, from, services);
+    }
 
+    private void snapshot(ToolInfo tool, File from, ToolInstallServicesProvider services) throws IOException {
+        File installDir = tool.getInstallationDirectory().get().getAsFile();
         FileSystemAccess fileSystemAccess = services.getFileSystemAccess();
         fileSystemAccess.invalidate(singleton(installDir.getAbsolutePath()));
 
-        Files.createDirectories(hashFile(tool, toolArchive).getParentFile().toPath());
-        Files.writeString(hashFile(tool, toolArchive).toPath(), readSnapshot(tool, services));
+        Files.createDirectories(hashFile(tool, from).getParentFile().toPath());
+        Files.writeString(hashFile(tool, from).toPath(), readSnapshot(tool, services));
     }
 
     private String readSnapshot(ToolInfo tool, ToolInstallServicesProvider services) {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
         FileSystemAccess fileSystemAccess = services.getFileSystemAccess();
-        return fileSystemAccess.read(installDir.getAbsolutePath()).getHash().toString();
+        if (tool.getExcludes().get().isEmpty()) {
+            return fileSystemAccess.read(installDir.getAbsolutePath()).getHash().toString();
+        } else {
+            return fileSystemAccess.read(installDir.getAbsolutePath(),
+                    new ToolExcludesFilter(tool.getExcludes().get())
+            ).orElseThrow(IllegalStateException::new).getHash().toString();
+        }
     }
 
     private File hashFile(ToolInfo tool, File archive) {
-        return tool.getGradleUserHomeDir().get().dir("artifact-extraction/" + archive.getName() + ".hash").getAsFile();
+        return tool.getToolRegistryDirectory().get().dir(archive.getName() + ".hash").getAsFile();
     }
 }

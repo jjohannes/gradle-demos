@@ -6,8 +6,10 @@ import org.gradle.api.invocation.Gradle;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
+import software.onepiece.toolchain.service.ToolInstallService;
 
 import javax.inject.Inject;
+import java.io.File;
 
 public abstract class ToolsExtension {
 
@@ -45,15 +47,20 @@ public abstract class ToolsExtension {
         getRepositories().add(repo);
     }
 
-    public void register(String id, String group, String name, String version, String executable) {
+    public void register(String id, String group, String name, String version) {
+        register(id, group, name, version, a -> {});
+    }
+
+    public void register(String id, String group, String name, String version, Action<ToolInfo> action) {
         ToolInfo tool = getObjects().newInstance(ToolInfo.class);
         tool.getGroup().set(group);
         tool.getName().set(name);
         tool.getVersion().set(version);
-        tool.getGradleUserHomeDir().set(getGradle().getGradleUserHomeDir());
-        tool.getInstallationDirectory().set(
-                getLayout().getSettingsDirectory().dir("tools-installations/" + name + "-" + version));
-        tool.getExecutable().set(executable);
+        tool.getToolRegistryDirectory().set(new File(getGradle().getGradleUserHomeDir(),
+                "toolchain-management/registry"));
+        tool.getInstallationDirectory().set(new File(getGradle().getGradleUserHomeDir(),
+                "toolchain-management/tools"));
+        action.execute(tool);
         getTools().put(id, tool);
     }
 

@@ -1,4 +1,4 @@
-package software.onepiece.toolchain.tasks;
+package software.onepiece.toolchain.task;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;
@@ -6,7 +6,7 @@ import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.workers.WorkerExecutor;
-import software.onepiece.toolchain.ToolUsingTask;
+import software.onepiece.toolchain.worker.PrintToolWorkAction;
 
 import javax.inject.Inject;
 
