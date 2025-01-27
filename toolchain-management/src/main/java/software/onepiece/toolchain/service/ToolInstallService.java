@@ -1,6 +1,5 @@
 package software.onepiece.toolchain.service;
 
-import net.lingala.zip4j.ZipFile;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository;
@@ -14,6 +13,7 @@ import org.gradle.internal.vfs.FileSystemAccess;
 import org.slf4j.LoggerFactory;
 import software.onepiece.toolchain.ToolInfo;
 import software.onepiece.toolchain.ToolRepositoryInfo;
+import software.onepiece.toolchain.extract.ExtractUtil;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
 
-public abstract class ToolInstallService implements BuildService<ToolInstallServiceParameters>{
+public abstract class ToolInstallService implements BuildService<ToolInstallServiceParameters> {
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(ToolInstallService.class);
 
     @Inject
@@ -126,8 +126,8 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         File installDir = tool.getInstallationDirectory().get().getAsFile();
         getFiles().delete(f -> f.delete(installDir));
         getFiles().copy(spec -> {
-           spec.from(from);
-           spec.into(installDir);
+            spec.from(from);
+            spec.into(installDir);
         });
         snapshot(tool, from, services);
     }
@@ -135,9 +135,7 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
     private void extractFile(ToolInfo tool, File from, ToolInstallServicesProvider services) throws IOException {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
         getFiles().delete(f -> f.delete(installDir));
-        try (ZipFile zipFile = new ZipFile(from)) {
-            zipFile.extractAll(installDir.getAbsolutePath());
-        }
+        ExtractUtil.extractArchive(from, installDir);
         snapshot(tool, from, services);
     }
 
