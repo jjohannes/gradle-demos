@@ -8,10 +8,9 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(11)
 }
 
-
-gradlePlugin.plugins.create("software.onepiece.toolchain-management") {
+gradlePlugin.plugins.create("software.onepiece.tool-install") {
     id = name
-    implementationClass = "software.onepiece.toolchain.ToolchainManagementPlugin"
+    implementationClass = "software.onepiece.toolchain.ToolInstallPlugin"
 }
 
 repositories {

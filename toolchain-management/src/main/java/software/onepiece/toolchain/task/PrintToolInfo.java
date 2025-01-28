@@ -6,9 +6,11 @@ import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.workers.WorkerExecutor;
-import software.onepiece.toolchain.worker.PrintToolWorkAction;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.stream.Collectors;
 
 @CacheableTask
 abstract public class PrintToolInfo extends DefaultTask implements ToolUsingTask {
@@ -21,10 +23,12 @@ abstract public class PrintToolInfo extends DefaultTask implements ToolUsingTask
 
     @TaskAction
     protected void execute() {
-        getExecutor().noIsolation().submit(PrintToolWorkAction.class, a -> {
-            a.getToolInstall().set(getToolInstall());
-            a.getToolIds().set(getToolIds());
-            a.getResult().set(getResult());
-        });
+        installTools();
+        try {
+            Files.writeString(getResult().get().getAsFile().toPath(),
+                    "Used: " + getTools().get().stream().map(t -> t.getExecutable().get()).collect(Collectors.joining()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

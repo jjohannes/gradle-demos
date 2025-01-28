@@ -5,10 +5,12 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.internal.artifacts.DependencyManagementServices;
 import org.gradle.api.internal.artifacts.DependencyResolutionServices;
+import org.gradle.api.internal.file.FileCollectionFactory;
+import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.internal.initialization.StandaloneDomainObjectContext;
 import org.gradle.api.logging.Logger;
-import org.gradle.api.services.BuildService;
 import org.gradle.internal.vfs.FileSystemAccess;
 import org.slf4j.LoggerFactory;
 import software.onepiece.toolchain.ToolInfo;
@@ -20,71 +22,73 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
 
-public abstract class ToolInstallService implements BuildService<ToolInstallServiceParameters> {
+public abstract class ToolInstallService {
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(ToolInstallService.class);
+
+    @Inject
+    protected abstract FileSystemAccess getFileSystemAccess();
+    @Inject
+    protected abstract DependencyManagementServices getDependencyManagementServices();
+    @Inject
+    protected abstract FileResolver getDependencyFileResolver();
+    @Inject
+    protected abstract FileCollectionFactory getFileCollectionFactory();
 
     @Inject
     protected abstract FileSystemOperations getFiles();
 
-    public List<ToolInfo> getTools(List<String> ids) {
-        return ids.stream().map((String id) -> getParameters().getTools().getting(id).get()).collect(Collectors.toList());
+    public void installTools(List<ToolInfo> ids, List<ToolRepositoryInfo> toolRepositories) {
+        ids.forEach(tool -> installTool(tool, toolRepositories));
     }
 
-    public List<ToolInfo> getTools(List<String> ids, ToolInstallServicesProvider services) {
-        return ids.stream().map((String id) -> getTool(id, services)).collect(Collectors.toList());
-    }
-
-    private ToolInfo getTool(String id, ToolInstallServicesProvider services) {
+    private void installTool(ToolInfo tool, List<ToolRepositoryInfo> toolRepositories) {
         try {
-            ToolInfo tool = getParameters().getTools().getting(id).get();
             boolean useFromFolder = tool.getFromFolder().isPresent();
 
-            File from = useFromFolder
-                    ? new File(tool.getFromFolder().get())
-                    : createArchiveResolver(tool, services).getSingleFile();
-            File hashFile = hashFile(tool, from);
+            File hashFile = hashFile(tool);
 
-            if (isInstallationInvalid(tool, hashFile, services)) {
-                synchronized (tool) {
+            if (isInstallationInvalid(tool, hashFile)) {
+                synchronized (tool.id()) {
                     // still invalid after synchronize?
-                    if (isInstallationInvalid(tool, hashFile, services)) {
+                    if (isInstallationInvalid(tool, hashFile)) {
+                        File from = useFromFolder
+                                ? new File(tool.getFromFolder().get())
+                                : createArchiveResolver(tool, toolRepositories).getSingleFile();
+
                         if (useFromFolder) {
                             LOGGER.lifecycle("Copying: " + from.getName());
-                            copyFolder(tool, from, services);
+                            copyFolder(tool, from);
                         } else {
                             LOGGER.lifecycle("Extracting: " + from.getName());
-                            extractFile(tool, from, services);
+                            extractFile(tool, from);
                         }
                     }
                 }
             } else {
-                LOGGER.lifecycle("UP-TO-DATE: " + from.getName());
+                LOGGER.lifecycle("UP-TO-DATE: " + tool.id());
             }
-
-            return tool;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private boolean isInstallationInvalid(ToolInfo tool, File hashFile, ToolInstallServicesProvider services) throws IOException {
+    private boolean isInstallationInvalid(ToolInfo tool, File hashFile) throws IOException {
         String previousSnapshot = hashFile.exists() ? Files.readString(hashFile.toPath()) : "";
-        String currentSnapshot = readSnapshot(tool, services);
+        String currentSnapshot = readSnapshot(tool);
         return !currentSnapshot.equals(previousSnapshot);
     }
 
-    private FileCollection createArchiveResolver(ToolInfo tool, ToolInstallServicesProvider services) {
-        DependencyResolutionServices dmServices = services.getDependencyManagementServices().newDetachedResolver(
-                services.getDependencyFileResolver(),
-                services.getFileCollectionFactory(),
+    private FileCollection createArchiveResolver(ToolInfo tool, List<ToolRepositoryInfo> toolRepositories) {
+        DependencyResolutionServices dmServices = getDependencyManagementServices().newDetachedResolver(
+                getDependencyFileResolver(),
+                getFileCollectionFactory(),
                 StandaloneDomainObjectContext.ANONYMOUS
         );
         RepositoryHandler repositories = dmServices.getResolveRepositoryHandler();
-        for (ToolRepositoryInfo repo : getParameters().getRepositories().get()) {
+        for (ToolRepositoryInfo repo : toolRepositories) {
             if (repo.getPattern().isPresent()) {
                 // Custom Ivy
                 repositories.ivy(ivy ->
@@ -116,41 +120,40 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         Configuration resolver = dmServices.getConfigurationContainer().resolvable("toolDownload").get();
         resolver.extendsFrom(tools);
 
-        String gav = tool.getGroup().get() + ":" + tool.getName().get() + ":" + tool.getVersion().get();
-        dmServices.getDependencyHandler().add(tools.getName(), gav);
+        dmServices.getDependencyHandler().add(tools.getName(), tool.id());
 
         return resolver;
     }
 
-    private void copyFolder(ToolInfo tool, File from, ToolInstallServicesProvider services) throws IOException {
+    private void copyFolder(ToolInfo tool, File from) throws IOException {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
         getFiles().delete(f -> f.delete(installDir));
         getFiles().copy(spec -> {
             spec.from(from);
             spec.into(installDir);
         });
-        snapshot(tool, from, services);
+        snapshot(tool);
     }
 
-    private void extractFile(ToolInfo tool, File from, ToolInstallServicesProvider services) throws IOException {
+    private void extractFile(ToolInfo tool, File from) throws IOException {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
         getFiles().delete(f -> f.delete(installDir));
         ExtractUtil.extractArchive(from, installDir);
-        snapshot(tool, from, services);
+        snapshot(tool);
     }
 
-    private void snapshot(ToolInfo tool, File from, ToolInstallServicesProvider services) throws IOException {
+    private void snapshot(ToolInfo tool) throws IOException {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
-        FileSystemAccess fileSystemAccess = services.getFileSystemAccess();
+        FileSystemAccess fileSystemAccess = getFileSystemAccess();
         fileSystemAccess.invalidate(singleton(installDir.getAbsolutePath()));
 
-        Files.createDirectories(hashFile(tool, from).getParentFile().toPath());
-        Files.writeString(hashFile(tool, from).toPath(), readSnapshot(tool, services));
+        Files.createDirectories(hashFile(tool).getParentFile().toPath());
+        Files.writeString(hashFile(tool).toPath(), readSnapshot(tool));
     }
 
-    private String readSnapshot(ToolInfo tool, ToolInstallServicesProvider services) {
+    private String readSnapshot(ToolInfo tool) {
         File installDir = tool.getInstallationDirectory().get().getAsFile();
-        FileSystemAccess fileSystemAccess = services.getFileSystemAccess();
+        FileSystemAccess fileSystemAccess = getFileSystemAccess();
         if (tool.getExcludes().get().isEmpty()) {
             return fileSystemAccess.read(installDir.getAbsolutePath()).getHash().toString();
         } else {
@@ -160,7 +163,7 @@ public abstract class ToolInstallService implements BuildService<ToolInstallServ
         }
     }
 
-    private File hashFile(ToolInfo tool, File archive) {
-        return tool.getToolRegistryDirectory().get().dir(archive.getName() + ".hash").getAsFile();
+    private File hashFile(ToolInfo tool) {
+        return tool.getToolRegistryDirectory().get().dir(tool.id().replace(":", "_") + ".hash").getAsFile();
     }
 }

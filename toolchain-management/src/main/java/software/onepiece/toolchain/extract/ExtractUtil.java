@@ -20,7 +20,7 @@ public class ExtractUtil {
     public static void extractArchive(File archive, File destination) {
         String archiveName = archive.getName().toLowerCase();
         long startTimeMillis = System.currentTimeMillis();
-        LOGGER.lifecycle("Tool Transform Start Time : [" + archive.getAbsolutePath() + "] : [" + startTimeMillis + "]");
+        LOGGER.lifecycle("Tool Extract Start Time : [" + archive.getAbsolutePath() + "] : [" + startTimeMillis + "]");
 
         try {
             if (archiveName.endsWith(".7z")) {
@@ -34,8 +34,8 @@ public class ExtractUtil {
 
         long endTimeMillis = System.currentTimeMillis();
         long transformTimeMillis = (endTimeMillis - startTimeMillis);
-        LOGGER.lifecycle("Tool Transform End Time : [" + archive.getAbsolutePath() + "] : [" + endTimeMillis + "]");
-        LOGGER.lifecycle("Tool Transform Time : [" + archive.getAbsolutePath() + "] : [" + transformTimeMillis + "]");
+        LOGGER.lifecycle("Tool Extract End Time : [" + archive.getAbsolutePath() + "] : [" + endTimeMillis + "]");
+        LOGGER.lifecycle("Tool Extract Time : [" + archive.getAbsolutePath() + "] : [" + transformTimeMillis + "]");
     }
 
     private static void extractZip(File archive, File destination) throws IOException {
