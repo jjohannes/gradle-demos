@@ -1,7 +1,7 @@
 plugins {
     id("application")
-    id("org.gradlex.jvm-dependency-conflict-resolution") version "2.1.2" // for patching POM metadata
-    id("org.gradlex.extra-java-module-info") version "1.10.1"            // for patching 'module-info.class'
+   // id("org.gradlex.jvm-dependency-conflict-resolution") version "2.1.2" // for patching POM metadata
+   // id("org.gradlex.extra-java-module-info") version "1.10.1"            // for patching 'module-info.class'
 }
 
 application {
@@ -10,13 +10,19 @@ application {
 }
 
 dependencies {
-    implementation("org.apache.logging.log4j:log4j-api:2.24.3")
+    // To make the example compile, build '2.25.0-SNAPSHOT' from the PR associated with
+    // https://github.com/apache/logging-log4j2/issues/3437
+    implementation("org.apache.logging.log4j:log4j-api:2.25.0-SNAPSHOT")
+    // Or use release '2.24.3' and activate the patching rules below
+    // implementation("org.apache.logging.log4j:log4j-api:2.24.3")
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-Werror")
     options.compilerArgs.add("-Xlint:all") // includes 'classfile' check
 }
+
+/*
 
 // To get the check passing, we first need the annotation libraries on the compile classpath.
 // The user could define them directly as dependencies, but it would be more correct if Log4j
@@ -46,3 +52,5 @@ extraJavaModuleInfo {
     // fishy: transitive dependencies of annotation libraries without Module Name....
     failOnMissingModuleInfo = false
 }
+
+*/

@@ -1,3 +1,6 @@
 dependencyResolutionManagement {
-    repositories { mavenCentral() }
+    repositories {
+        mavenCentral()
+        mavenLocal() // for local snapshot of Log4J
+    }
 }
