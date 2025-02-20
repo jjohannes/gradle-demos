@@ -54,3 +54,45 @@ extraJavaModuleInfo {
 }
 
 */
+
+
+// Check the classpaths
+val expectedRuntimeClasspath = listOf(
+    "log4j-api"
+)
+val expectedCompileClasspath = listOf(
+    "biz.aQute.bnd.annotation",
+    "error_prone_annotations",
+    "jspecify",
+    "jsr305",
+    "log4j-api",
+    "org.osgi.annotation.bundle",
+    "org.osgi.annotation.versioning",
+    "org.osgi.resource",
+    "org.osgi.service.serviceloader",
+    "spotbugs-annotations"
+)
+
+tasks.register("assertRuntimeClasspath") {
+    inputs.files(configurations.runtimeClasspath)
+    doLast {
+        val actual = inputs.files.map { it.name.replace(Regex("-[0-9].*"), "") }
+        assert(actual.sorted() == expectedRuntimeClasspath) {
+            "Unexpected runtime classpath: $actual"
+        }
+    }
+}
+tasks.register("assertCompileClasspath") {
+    inputs.files(configurations.compileClasspath)
+    doLast {
+        val actual = inputs.files.map { it.name.replace(Regex("-[0-9].*"), "") }
+        assert(actual.sorted() == expectedCompileClasspath) {
+            "Unexpected compile classpath: $actual"
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.named("assertRuntimeClasspath"))
+    dependsOn(tasks.named("assertCompileClasspath"))
+}
