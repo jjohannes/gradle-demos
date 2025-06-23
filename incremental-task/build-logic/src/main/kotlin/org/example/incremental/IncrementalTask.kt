@@ -9,6 +9,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 
@@ -28,7 +29,12 @@ abstract class IncrementalTask : DefaultTask() {
         if (inputs.isIncremental) {
             println("CHANGED: " + inputs.getFileChanges(sourceFiles))
             inputs.getFileChanges(sourceFiles).forEach {
-                outDir.file(it.file.name + ".txt").get().asFile.writeText("out - " + it.file.readText())
+                val outFile = outDir.file(it.file.name + ".txt").get().asFile
+                if (it.changeType == ChangeType.REMOVED) {
+                    outFile.delete()
+                } else {
+                    outFile.writeText("out - " + it.file.readText())
+                }
             }
         } else {
             println("FULL")
