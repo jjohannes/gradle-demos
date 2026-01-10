@@ -17,6 +17,7 @@ Each folder is a self-contained demo project:
 - [dependency-constraints](dependency-constraints)
 - [extending-publications](extending-publications)
 - [gmm-java-ecosystem](gmm-java-ecosystem)
+- [gradle-version-attribute](gradle-version-attribute)
 - [guava-conflict](guava-conflict)
 - [internal-platform](internal-platform)
 - [java-17](java-17)
