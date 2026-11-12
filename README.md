@@ -26,6 +26,7 @@ Each folder is a self-contained demo project:
 - [jvm-environment-gradle-6](jvm-environment-gradle-6)
 - [log-to-file](log-to-file)
 - [multi-release-jars](multi-release-jars)
+- [plain-c](plain-c)
 - [plugin-versioning](plugin-versioning)
 - [publish-with-timestamp-version](publish-with-timestamp-version)
 - [share-test-jar](share-test-jar)
