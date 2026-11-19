@@ -8,10 +8,9 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(11)
 }
 
-
-gradlePlugin.plugins.create("software.onepiece.toolchain-management") {
+gradlePlugin.plugins.create("software.onepiece.tool-install") {
     id = name
-    implementationClass = "software.onepiece.toolchain.ToolchainManagementPlugin"
+    implementationClass = "software.onepiece.toolchain.ToolInstallPlugin"
 }
 
 repositories {
@@ -19,5 +18,6 @@ repositories {
 }
 
 dependencies {
-    implementation("net.lingala.zip4j:zip4j:2.11.5")
+    implementation("org.apache.commons:commons-compress:1.26.2")
+    runtimeOnly("org.tukaani:xz:1.9")
 }
