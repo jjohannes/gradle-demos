@@ -1,0 +1,1 @@
+This shows the conflict use case of [guice-select-no_aop-variant](../guice-select-no_aop-variant).

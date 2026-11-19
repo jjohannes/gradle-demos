@@ -1,0 +1,1 @@
+See example in Gradle user manual on [adding variants for native jars](https://docs.gradle.org/6.0-rc-3/userguide/component_metadata_rules.html#adding_variants_for_native_jars).

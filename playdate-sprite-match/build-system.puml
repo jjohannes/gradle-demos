@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+skinparam componentStyle rectangle
+
+folder source
+database PlaydateRepo
+database KenneyGameAssetsRepo
+
+component installPlaydateDevTools {
+    port sdkPkg
+}
+component processGameAssetPacks {
+    port assetPack
+}
+component mergeSourceAndAssets {
+    port source as sourceInput
+    port assets
+}
+component compilePlaydate {
+    port playdateSdk
+    port gameSource
+}
+
+source -> sourceInput
+PlaydateRepo -> sdkPkg
+KenneyGameAssetsRepo -> assetPack
+
+processGameAssetPacks --> assets
+
+installPlaydateDevTools --> playdateSdk
+mergeSourceAndAssets --> gameSource
+
+@enduml

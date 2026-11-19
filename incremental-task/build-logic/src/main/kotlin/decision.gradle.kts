@@ -26,7 +26,12 @@ tasks.register("build") {
 
 
 // Incremental task
-tasks.register<IncrementalTask>("incremental") {
+val incremental = tasks.register<IncrementalTask>("incremental") {
     sourceFiles.from(layout.projectDirectory.dir("src"))
     outDir = layout.buildDirectory.dir("incremental")
+}
+
+tasks.register<Sync>("syncAfterIncremental") {
+    from(incremental)
+    into(layout.buildDirectory.dir("finalDestination"))
 }

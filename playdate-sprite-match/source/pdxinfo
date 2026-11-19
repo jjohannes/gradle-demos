@@ -1,0 +1,5 @@
+name=Sprite Match!
+author=Jendrik Johannes
+bundleID=software.onepiece.sprite-match
+imagePath=card-image.gif
+version=1.0

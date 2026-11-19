@@ -1,0 +1,1 @@
+https://docs.gradle.org/7.0-milestone-3/userguide/implementing_gradle_plugins.html#plugin-with-variants
